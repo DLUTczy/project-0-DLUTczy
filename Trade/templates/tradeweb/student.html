@@ -1,0 +1,72 @@
+{% extends "tradeweb/layout.html" %}
+{% block body %}
+
+    <div class="container-fluid ">
+        <div class="row justify-content-md-center ">
+            <div class="col-md-4 table-bordered col-center-block" style="background-color:#e2e6ea;height: 400px;">
+                <form action="{% url 'student' %}" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="username" value="{{ user.username }}">
+                    <div class="form-group">
+                        <label for="exampleFormControlName">真实姓名</label>
+                        <input type="text" class="form-control" id="exampleFormControlName" name="name"
+                               placeholder="张三" required="required">
+                    </div>
+                    <div class="form-group">
+                        <label for="studentNo">学号</label>
+                        <input type="text" class="form-control" id="studentNo" name="student_id"
+                               placeholder="0000000000" required="required">
+                    </div>
+                    <div class="form-group">
+                        <label for="select_city">城市</label>
+                        <select class="form-control" id="select_city" required="required">
+                            <option selected="selected"></option>
+                            {% for city in cities %}
+                                <option value="{{ city.area_id }}">{{ city.area_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="select_school">学校</label>
+                        <select class="form-control" id="select_school" disabled="disabled" name="school_id" required="required">
+                            <option selected="selected"></option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <input class="btn btn-primary" type="submit" value="认证">
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+    <script>
+
+        $("#select_city").change(function () {
+            $("#select_school").empty();
+            document.getElementById("select_school").disabled = true;
+            var id = $('#select_city option:selected').val();
+            $.ajax({
+                url: "/ajax_school",
+                type: "get",
+                data: {area_id: id},
+                dataType: "json",
+                async: true,
+
+                success: function (data) {
+                    school_list = JSON.parse(data)
+                    for (var school in school_list) {
+
+                        var pOption = "option value='" + school_list[school].school_id + "'>" + school_list[school].school_name + "</option";
+                        pOption = "<" + pOption + ">";
+                        $("#select_school").append(pOption);
+                        document.getElementById("select_school").disabled = false;
+                    }
+                },
+
+            });
+
+        });
+    </script>
+
+{% endblock %}

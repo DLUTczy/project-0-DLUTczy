@@ -5,11 +5,21 @@
 <head>
     <title>{% block title %}Trade{% endblock %}</title>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" href="{% static "css/bootstrap.min.css" %}">
     <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.js"></script>
     <script src="{% static "js/bootstrap.bundle.min.js" %}"></script>
-
+    <style>
+        .col-center-block {
+            position: absolute;
+            top: 50%;
+            -webkit-transform: translateY(-50%);
+            -moz-transform: translateY(-50%);
+            -ms-transform: translateY(-50%);
+            -o-transform: translateY(-50%);
+            transform: translateY(-50%);
+        }
+    </style>
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-light bg-transparent" style="font-size: 14px; height: 30px">
@@ -17,27 +27,28 @@
     {#  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">#}
     {#    <span class="navbar-toggler-icon"></span>#}
     {#  </button>#}
-    <div class="collapse navbar-collapse" >
+    <div class="collapse navbar-collapse">
         <ul class="navbar-nav">
             {% if user.is_authenticated %}
-                                <li class="nav-item">
-                                    {% if user.student == null  %}
-                                        <a class="nav-link" href="#">学生认证</a>
-                                        {% else %}
-                                        <a class="nav-link" href="#">{{ user.student.school.school_name }}</a>
-                                    {% endif %}
+                <li class="nav-item">
+                    {% if user.student == null %}
+                        <a class="nav-link" href="{% url 'student' %}">学生认证</a>
+                    {% else %}
+                        <a class="nav-link" href="#">{{ user.student.school.school_name }}</a>
+                    {% endif %}
 
-                                </li>
-                                <li class="nav-item dropdown">
-                                     <a class="nav-link dropdown-toggle" href="{% url 'logout' %}" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                      {{ user.username }}
-                                    </a>
-                                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                                      <a class="dropdown-item" href="#">个人主页</a>
-                                      <a class="dropdown-item" href="#">我的钱包</a>
-                                      <a class="dropdown-item" href="{% url 'logout' %}">退出登录</a>
-                                    </div>
-                                </li>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="{% url 'logout' %}" id="navbarDropdownMenuLink"
+                       role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        {{ user.username }}
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        <a class="dropdown-item" href="#">个人主页</a>
+                        <a class="dropdown-item" href="#">我的钱包</a>
+                        <a class="dropdown-item" href="{% url 'logout' %}">退出登录</a>
+                    </div>
+                </li>
             {% else %}
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'login' %}" style="color: red">[亲，请登陆]</a>
@@ -54,4 +65,5 @@
 {% block body %}
 {% endblock %}
 </body>
+
 </html>
