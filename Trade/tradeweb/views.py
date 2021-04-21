@@ -30,7 +30,7 @@ def login_view(request):
             return HttpResponseRedirect(reverse("index"))
         else:
             return render(request, "tradeweb/login.html", {
-                "message": "Invalid username and/or password."
+                "message": "手机号或密码不正确."
             })
     else:
         return render(request, "tradeweb/login.html")
