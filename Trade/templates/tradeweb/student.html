@@ -3,7 +3,7 @@
 
     <div class="container-fluid ">
         <div class="row justify-content-md-center ">
-            <div class="col-md-4 table-bordered col-center-block" style="background-color:#e2e6ea;height: 400px;">
+            <div class="col-md-4 table-bordered col-center-block" style="padding-top: 10px;background-color:#e2e6ea;height: 400px;">
                 <form action="{% url 'student' %}" method="post">
                     {% csrf_token %}
                     <input type="hidden" name="username" value="{{ user.username }}">

@@ -1,10 +1,36 @@
 {% extends "tradeweb/layout.html" %}
 
 {% block body %}
-    <div class="container-fluid ">
-        <div class="row justify-content-center">
-            <div class="col-md-8 table-bordered">
+    {% load static %}
 
+    <div class="container-fluid ">
+        <div class="row justify-content-center" style="padding-top: 15px">
+{#            搜索栏#}
+            <div class="pc_search">
+                <img class="logo" src="{% static 'img/logo.png' %}" >
+                <div class="search">
+                    <div class="search-border">
+                        <form action="#" method="post">
+                            <span class="text-wrap">
+                                <input type="text" class="text" name="key" >
+                            </span>
+                            <input type="submit" class="submit" value="搜索">
+                        </form>
+                    </div>
+                    <div class="search-links">
+                        <a style="color: red" href="#">耳机</a>
+                        <a href="#">内衣</a>
+                        <a href="#">袜子</a>
+                        <a href="#">书籍</a>
+                        <a href="#">电脑</a>
+                        <a href="#">篮球</a>
+                        <a href="#">垃圾袋</a>
+                    </div>
+                </div>
+            </div>
+{#            商品展示#}
+            <div class="col-md-8 border" style="padding-top: 10px">
+                <div>asda</div>
             </div>
         </div>
     </div>
