@@ -8,7 +8,7 @@ from django.db import models
 class User(AbstractUser):
     phoneID = models.BigIntegerField(primary_key=True)
     nickname = models.CharField(max_length=20)
-    student = models.ForeignKey("Student", on_delete=models.CASCADE, blank=True, null= True)
+    student = models.ForeignKey("Student", on_delete=models.CASCADE, blank=True, null=True)
 
 
 class Student(models.Model):
@@ -32,11 +32,11 @@ class Goods(models.Model):
     userID = models.ForeignKey("User", on_delete=models.CASCADE)
     goodImg = models.ImageField(upload_to="img")
     description = models.CharField(max_length=1000)
-    price = models.DecimalField(max_length=20,max_digits=2)
+    price = models.DecimalField(max_digits=20, decimal_places=2)
     state = models.CharField(max_length=10)
 
 
-class  Detail_Images(models.Model):
+class Detail_Images(models.Model):
     goodID = models.ForeignKey("Goods", on_delete=models.CASCADE)
     img = models.ImageField(upload_to="img")
     priority = models.IntegerField()
@@ -49,6 +49,7 @@ class Messages(models.Model):
     type = models.CharField(max_length=10)
     contentID = models.IntegerField(default=0)
 
+
 class Content_text(models.Model):
     CID = models.AutoField(primary_key=True)
     Cstr = models.CharField(max_length=200)
@@ -56,7 +57,7 @@ class Content_text(models.Model):
 
 class Content_Image(models.Model):
     CID = models.AutoField(primary_key=True)
-    CImage=models.ImageField(upload_to="img")
+    CImage = models.ImageField(upload_to="img")
 
 
 class Comments(models.Model):
