@@ -1,0 +1,92 @@
+{% extends "tradeweb/layout.html" %}
+{#商家发布的商品#}
+
+{% block body %}
+    {% load static %}
+    <style>
+        @keyframes movetest {
+            from {
+                transform: scaleY(0.1) translate(0px, -300px);
+
+            }
+            to {
+                transform: scaleY(1) translate(0px, 0px);
+
+            }
+        }
+
+        #changeblock {
+            animation-name: movetest;
+            animation-duration: 2s;
+            animation-fill-mode: forwards;
+        }
+    </style>
+    <div class="container-fluid">
+        <div class="row justify-content-md-center">
+            <div class="col-md-8 border">
+                <div class="container-fluid" style="padding-top: 10px;padding-bottom: 10px">
+                    <button class="btn btn-primary" id="add_btn">发布商品</button>
+                </div>
+                <div id="changeblock" class="border" style="display:none;padding:10px 5px 5px 10px">
+                    <form action="{% url 'release' user.phoneID %}" method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <input name="userID" type="hidden" contenteditable="false" value="{{ user.phoneID }}">
+                        <div class="form-group">
+                            <label for="goodName">商品名称</label>
+                            <input name="goodName" id="goodName" class="form-control" type="text" maxlength="100"
+                                   required="required">
+                        </div>
+                        <div class="form-group">
+                            <label for="image">商品图片 可多选</label>
+                            <input name="images" type="file" multiple="multiple" class="form-control" id="image">
+                        </div>
+                        <div class="form-group">
+                            <label for="category">商品标签 空格隔开</label>
+                            <input name="category" class="form-control" type="text" id="category" required="required">
+                        </div>
+                        <div class="form-group">
+                            <label for="description">商品描述</label>
+                            <textarea name="description" class="form-control" type="text" id="description" rows="3"
+                                      cols="80" maxlength="1000" required="required"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="price">价格</label>
+                            <input name="price" class="form-control" id="price" type="number" placeholder="price"
+                                   min="0" step="0.01" required="required">
+                        </div>
+                        <div>
+                            <span><input type="submit" class="btn btn-primary" value="确认"></span>
+                            <span><input type="button" id="cancle" class="btn btn-warning" value="取消"> </span>
+                        </div>
+
+                    </form>
+                </div>
+                <div class="container-fluid">
+                        <ul class="list list-unstyled">
+                            {% for good in goods %}
+                                <a href="#">
+                                    <img style="object-fit: cover; width: 194px; height: 194px"#}
+                                         src="{{ MEDIA_URL }}{{ good.goodImg }} ">
+                                    <div style="font-weight: bold; color: #0f0f0f;overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ good.goodName }}</div>
+                                    <div>price</div>
+                                </a>
+                            {% endfor %}
+                        </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        function my(id) {
+            return document.getElementById(id);
+        }
+
+        my("add_btn").onclick = function () {
+
+            my("changeblock").style.display = "";
+        }
+        my("cancle").onclick = function () {
+            my("changeblock").style.display = "none";
+        }
+    </script>
+{% endblock %}

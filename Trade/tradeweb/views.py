@@ -1,4 +1,6 @@
 import json
+import uuid
+import time
 
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponseRedirect, JsonResponse
@@ -9,6 +11,7 @@ from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 from pymysql import IntegrityError
 
+from Trade import settings
 from tradeweb.models import *
 
 
@@ -79,7 +82,7 @@ def register(request):
 
 def student(request):
     if request.method == "GET":
-        cities = tb_School.objects.all().distinct().order_by("area_id").values("area_id","area_name")
+        cities = tb_School.objects.all().distinct().order_by("area_id").values("area_id", "area_name")
         return render(request, "tradeweb/student.html", {
             "cities": cities,
         })
@@ -112,3 +115,45 @@ def ajax_school(request):
     for school in schools:
         list.append(school)
     return JsonResponse(json.dumps(list), safe=False)
+
+
+def release(request, phoneID):
+    if request.method == "GET":
+        phoneID = int(phoneID)
+        goods = Goods.objects.filter(userID_id=phoneID)
+        return render(request, "tradeweb/release.html",{
+            "goods": goods,
+        })
+    elif request.method == "POST":
+        goodName = request.POST["goodName"]
+        userID = request.POST["userID"]
+        user = User.objects.get(phoneID=userID)
+        description = request.POST["description"]
+        price = request.POST["price"]
+        imageList = request.FILES.getlist("images")
+        category = request.POST["category"]
+        cate_list = str(category).split(" ")
+
+        count = 0
+        goodID = (int)(time.time() * 1000000)
+
+        for image in imageList:
+            if count == 0:
+                Goods.objects.create(goodID=goodID, goodName=goodName, userID=user, goodImg=image, description=description,
+                                         price=price, state="在售").save()
+                print("保存成功")
+            else:
+                good = Goods.objects.get(goodID=goodID)
+                Detail_Images.objects.create(goodID=good, img=image, priority=(count - 1)).save()
+            with open(settings.MEDIA_ROOT + image.name, 'wb+') as f:
+                for chunk in image.chunks():
+                    f.write(chunk)
+                f.close()
+            count += 1
+        good = Goods.objects.get(goodID=goodID)
+        for cate in cate_list:
+            Category.objects.create(goodID=good, category=cate).save()
+        request.method = "GET"
+        return HttpResponseRedirect(reverse('release', args=[str(phoneID)]))
+
+

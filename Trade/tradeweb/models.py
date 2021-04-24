@@ -85,3 +85,8 @@ class Order(models.Model):
     orderTime = models.DateTimeField(auto_now_add=True)
     remark = models.CharField(max_length=100)
     address = models.ForeignKey("Address", on_delete=models.CASCADE)
+
+
+class Category(models.Model):
+    goodID = models.ForeignKey("Goods", on_delete=models.CASCADE)
+    category = models.CharField(max_length=20)
