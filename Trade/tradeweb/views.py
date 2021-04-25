@@ -16,7 +16,10 @@ from tradeweb.models import *
 
 
 def index(request):
-    return render(request, "tradeweb/index.html")
+    goods = Goods.objects.all()
+    return render(request, "tradeweb/index.html", {
+        "goods": goods,
+    })
 
 
 def login_view(request):
@@ -121,7 +124,7 @@ def release(request, phoneID):
     if request.method == "GET":
         phoneID = int(phoneID)
         goods = Goods.objects.filter(userID_id=phoneID)
-        return render(request, "tradeweb/release.html",{
+        return render(request, "tradeweb/release.html", {
             "goods": goods,
         })
     elif request.method == "POST":
@@ -139,8 +142,9 @@ def release(request, phoneID):
 
         for image in imageList:
             if count == 0:
-                Goods.objects.create(goodID=goodID, goodName=goodName, userID=user, goodImg=image, description=description,
-                                         price=price, state="在售").save()
+                Goods.objects.create(goodID=goodID, goodName=goodName, userID=user, goodImg=image,
+                                     description=description,
+                                     price=price, state="在售").save()
                 print("保存成功")
             else:
                 good = Goods.objects.get(goodID=goodID)
@@ -157,3 +161,47 @@ def release(request, phoneID):
         return HttpResponseRedirect(reverse('release', args=[str(phoneID)]))
 
 
+def details(request, goodID):
+    good = Goods.objects.get(goodID=goodID)
+    imgs = Detail_Images.objects.filter(goodID_id=goodID)
+    comments = Comments.objects.filter(goodID_id=goodID)
+    return render(request, "tradeweb/details.html", {
+        "good": good,
+        "imgs": imgs,
+        "comments": comments,
+    })
+
+
+@csrf_exempt
+def ajax_comment(request):
+    goodID = request.GET["goodID"]
+    good = Goods.objects.get(goodID=goodID)
+    userID = request.GET["userID"]
+    phone = User.objects.get(phoneID=userID)
+    content = request.GET["content"]
+    Comments.objects.create(goodID=good, userID=phone, content=content).save()
+    return JsonResponse(None, safe=False)
+
+
+@csrf_exempt
+def ajax_want(request):
+    goodID = request.GET["goodID"]
+    good = Goods.objects.get(goodID=goodID)
+    userID = request.GET["userID"]
+    phone = User.objects.get(phoneID=userID)
+    Wants.objects.create(goodID=good, userID=phone).save()
+    return JsonResponse(None, safe=False)
+
+@csrf_exempt
+def ajax_cancle(request):
+    userID = request.GET["userID"]
+
+    return JsonResponse(None, safe=False)
+
+
+def infopage(request):
+    return render(request, "tradeweb/myinfopage.html")
+
+
+def address(request):
+    return render(request, "tradeweb/address.html")

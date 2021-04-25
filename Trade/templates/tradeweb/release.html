@@ -2,25 +2,6 @@
 {#商家发布的商品#}
 
 {% block body %}
-    {% load static %}
-    <style>
-        @keyframes movetest {
-            from {
-                transform: scaleY(0.1) translate(0px, -300px);
-
-            }
-            to {
-                transform: scaleY(1) translate(0px, 0px);
-
-            }
-        }
-
-        #changeblock {
-            animation-name: movetest;
-            animation-duration: 2s;
-            animation-fill-mode: forwards;
-        }
-    </style>
     <div class="container-fluid">
         <div class="row justify-content-md-center">
             <div class="col-md-8 border">
@@ -62,16 +43,16 @@
                     </form>
                 </div>
                 <div class="container-fluid">
-                        <ul class="list list-unstyled">
-                            {% for good in goods %}
-                                <a href="#">
-                                    <img style="object-fit: cover; width: 194px; height: 194px"#}
-                                         src="{{ MEDIA_URL }}{{ good.goodImg }} ">
-                                    <div style="font-weight: bold; color: #0f0f0f;overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ good.goodName }}</div>
-                                    <div>price</div>
-                                </a>
-                            {% endfor %}
-                        </ul>
+                    <ul class="list list-unstyled">
+                        {% for good in goods %}
+                            <a href="{% url 'details' good.goodID %}">
+                                <img style="object-fit: cover; width: 150px; height: 150px"#}
+                                     src="{{ MEDIA_URL }}{{ good.goodImg }} ">
+                                <div style="font-weight: bold; color: #0f0f0f;overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ good.goodName }}</div>
+                                <div>price</div>
+                            </a>
+                        {% endfor %}
+                    </ul>
                 </div>
             </div>
         </div>

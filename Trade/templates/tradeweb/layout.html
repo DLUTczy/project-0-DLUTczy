@@ -10,11 +10,12 @@
     <link rel="stylesheet" href="{% static "global.css" %}">
     <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.js"></script>
     <script src="{% static "js/bootstrap.bundle.min.js" %}"></script>
+    {#    <script src="{% static "global.js" %}"></script>#}
 
 </head>
 <body>
-<nav class="navbar navbar-expand-lg navbar-light bg-transparent" >
-    <a href="{% url 'index' %}"><span class="navbar-text" >您好，欢迎来到淘淘大学生二手交易平台！</span></a>
+<nav class="navbar navbar-expand-lg navbar-light bg-transparent">
+    <a href="{% url 'index' %}"><span class="navbar-text">您好，欢迎来到淘淘大学生二手交易平台！</span></a>
     {#  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">#}
     {#    <span class="navbar-toggler-icon"></span>#}
     {#  </button>#}
@@ -47,98 +48,133 @@
                     <a class="nav-link" href="{% url 'register' %}">[免费注册]</a>
                 </li>
                 <li class="nav-item">
-                <a class="nav-link" href="{% url 'login' %}">购物车</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{% url 'login' %}">我的订单</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{% url 'login' %}">消息<span class="badge badge-danger">3</span></a>
-            </li>
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="{% url 'login' %}" id="navbarDropdownMenuLink"
-                   role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    卖家中心
-                </a>
-                <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                    <a class="dropdown-item" href="{% url 'login' %}">发布的商品</a>
-                    <a class="dropdown-item" href="{% url 'login' %}">已卖出的商品</a>
-                </div>
-            </li>
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="{% url 'login' %}" id="navbarDropdownMenuLink"
-                   role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    联系客服
-                </a>
-                <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                    <a class="dropdown-item" href="{% url 'login' %}">消费者客服</a>
-                    <a class="dropdown-item" href="{% url 'login' %}">卖家客服</a>
-                </div>
-            </li>
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="{% url 'login' %}" id="navbarDropdownMenuLink"
-                   role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    设置
-                </a>
-                <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                    <a class="dropdown-item" href="{% url 'login' %}">个人资料设置</a>
-                    <a class="dropdown-item" href="{% url 'login' %}">收货地址</a>
-                    <a class="dropdown-item" href="{% url 'login' %}">注销账号</a>
-                    <a class="dropdown-item" href="{% url 'logout' %}">退出登录</a>
-                </div>
-            </li>
+                    <a class="nav-link" href="{% url 'login' %}">购物车</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'login' %}">我的订单</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'login' %}">消息<span class="badge badge-danger">3</span></a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="{% url 'login' %}" id="navbarDropdownMenuLink"
+                       role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        卖家中心
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        <a class="dropdown-item" href="{% url 'login' %}">发布的商品</a>
+                        <a class="dropdown-item" href="{% url 'login' %}">已卖出的商品</a>
+                    </div>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="{% url 'login' %}" id="navbarDropdownMenuLink"
+                       role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        联系客服
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        <a class="dropdown-item" href="{% url 'login' %}">消费者客服</a>
+                        <a class="dropdown-item" href="{% url 'login' %}">卖家客服</a>
+                    </div>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="{% url 'login' %}" id="navbarDropdownMenuLink"
+                       role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        设置
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        <a class="dropdown-item" href="{% url 'login' %}">个人资料设置</a>
+                        <a class="dropdown-item" href="{% url 'login' %}">收货地址</a>
+                        <a class="dropdown-item" href="{% url 'login' %}">注销账号</a>
+                        <a class="dropdown-item" href="{% url 'logout' %}">退出登录</a>
+                    </div>
+                </li>
             {% endif %}
 
         </ul>
-    {% if user.is_authenticated %}
-        <ul class="nav navbar-nav navbar-right">
-            <li class="nav-item">
-                <a class="nav-link" href="#">购物车</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">我的订单</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">消息<span class="badge badge-danger">3</span></a>
-            </li>
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink"
-                   role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    卖家中心
-                </a>
-                <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                    <a class="dropdown-item" href="{% url 'release' user.phoneID %}">发布的商品</a>
-                    <a class="dropdown-item" href="#">已卖出的商品</a>
-                </div>
-            </li>
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink"
-                   role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    联系客服
-                </a>
-                <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                    <a class="dropdown-item" href="#">消费者客服</a>
-                    <a class="dropdown-item" href="#">卖家客服</a>
-                </div>
-            </li>
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink"
-                   role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    设置
-                </a>
-                <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                    <a class="dropdown-item" href="#">个人资料设置</a>
-                    <a class="dropdown-item" href="#">收货地址</a>
-                    <a class="dropdown-item" href="#">注销账号</a>
-                    <a class="dropdown-item" href="{% url 'logout' %}">退出登录</a>
-                </div>
-            </li>
-        </ul>
-    {% endif %}
+        {% if user.is_authenticated %}
+            <ul class="nav navbar-nav navbar-right">
+                <li class="nav-item">
+                    <a class="nav-link" href="#">购物车</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">我的订单</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">消息<span class="badge badge-danger">3</span></a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink"
+                       role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        卖家中心
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        <a class="dropdown-item" href="{% url 'release' user.phoneID %}">发布的商品</a>
+                        <a class="dropdown-item" href="#">已卖出的商品</a>
+                    </div>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink"
+                       role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        联系客服
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        <a class="dropdown-item" href="#">消费者客服</a>
+                        <a class="dropdown-item" href="#">卖家客服</a>
+                    </div>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink"
+                       role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        设置
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        <a class="dropdown-item" href="{% url 'infopage' %}">个人资料设置</a>
+                        <a class="dropdown-item" href="{% url 'address' %}">收货地址</a>
+                        <a class="dropdown-item" data-toggle="modal" data-target="#exampleModal" href="">注销账号</a>
+                        <a class="dropdown-item" href="{% url 'logout' %}">退出登录</a>
+                    </div>
+                    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+                         aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel">注意</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    慎重考虑是否要注销账号，此过程不可逆！
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal" id="cancle_model">取消</button>
+                                    <button type="button" class="btn btn-primary" id="sure_btn_1">确认</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        {% endif %}
     </div>
 </nav>
 <script>
+    function my(id) {
+        return document.getElementById(id)
+    }
 
+    my("sure_btn_1").onclick = function () {
+        my("cancle_model").click();
+        $.ajax({
+            url:"/ajax_cancle",
+            type:"get",
+            data:{userID:{{user.phoneID}}},
+            dataType:"json",
+            success: function (){
+                alert("注销成功");
+            }
+        })
+    }
 </script>
 {% block body %}
 {% endblock %}

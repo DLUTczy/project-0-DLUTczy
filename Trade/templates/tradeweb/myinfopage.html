@@ -4,11 +4,15 @@
         <div class="row justify-content-center">
             <div class="col-md-8 col-center-block">
 {#                会员名 不可修改#}
+                <div> 会员名：{{ user.username }}</div>
 {#                昵称 可修改#}
+                <div>昵称：{{ user.nikename }}</div>
 {#                邮箱 可修改#}
-
+                <div>邮箱：{{ user.email }}</div>
 {#                学生认证的信息 不可修改#}
-
+                {% if user.student %}
+                    <div>认证学校：{{ user.student.school.school_name }}</div>
+                {% endif %}
             </div>
         </div>
     </div>

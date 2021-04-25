@@ -95,8 +95,8 @@ a:hover {
 .list > a {
     color: #888888;
     display: inline-block;
-    width: 234px;
-    height: 366px;
+    width: 200px;
+    height: 250px;
     box-sizing: border-box;
     padding: 22px 20px 20px;
     background: #fff;
@@ -113,4 +113,20 @@ a:hover {
     border-style: solid;
 }
 
+@keyframes movetest {
+    from {
+        transform: scaleY(0.1) translate(0px, -300px);
+
+    }
+    to {
+        transform: scaleY(1) translate(0px, 0px);
+
+    }
+}
+
+#changeblock {
+    animation-name: movetest;
+    animation-duration: 2s;
+    animation-fill-mode: forwards;
+}
 

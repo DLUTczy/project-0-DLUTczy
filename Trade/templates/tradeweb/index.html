@@ -30,7 +30,18 @@
             </div>
 {#            商品展示#}
             <div class="col-md-8 border" style="padding-top: 10px">
-                <div>asda</div>
+                <div class="container-fluid">
+                    <ul class="list list-unstyled">
+                        {% for good in goods %}
+                            <a href="{% url 'details' good.goodID %}">
+                                <img style="object-fit: cover; width: 150px; height: 150px"#}
+                                     src="{{ MEDIA_URL }}{{ good.goodImg }} ">
+                                <div style="font-weight: bold; color: #0f0f0f;overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ good.goodName }}</div>
+                                <div>price</div>
+                            </a>
+                        {% endfor %}
+                    </ul>
+                </div>
             </div>
         </div>
     </div>
