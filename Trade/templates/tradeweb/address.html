@@ -1,4 +1,48 @@
 {% extends "tradeweb/layout.html" %}
 {% block body %}
-    管理收货地址 -可增- -可删- 列表展示已存在的收获地址 不考虑-更改-功能
+    <div class="container-fluid">
+        <div class="row justify-content-md-center">
+            <div class="col-md-8" id="address">
+
+                <div style="background-color: #e2e6ea; padding: 10px 5px">
+                    <form method="post" action="{% url 'add_address' user.phoneID %}">
+                        {% csrf_token %}
+                        <button class="btn-primary" type="submit">添加地址</button>
+                        <input type="text" name="address" width="100%" required placeholder="省 市 区/县 乡/街道 门牌号">
+                    </form>
+                </div>
+                <ol class="">
+                    {% for address in addresses %}
+                        <li id="address_li_{{ address.addressID }}"
+                            style="padding: 10px 5px;margin: 10px 5px ; background-color: #e2e6ea">
+                            <span style="float: left">{{ address.address }}</span>
+                            <span style="float: right"><button id="{{ address.addressID }}">删除</button></span>
+                        </li>
+                    {% endfor %}
+                </ol>
+
+
+            </div>
+        </div>
+    </div>
+    <script>
+        function my(id) {
+            return document.getElementById(id);
+        }
+        {% for address in addresses %}
+            my("{{ address.addressID }}").onclick = function () {
+                my("address_li_{{ address.addressID }}").remove();
+                $.ajax({
+                    url: '/ajax_deladdress',
+                    type: 'get',
+                    data: {addressID: {{address.addressID}}},
+                    dataType: "json",
+                    success: function () {
+                        alert("删除成功");
+                    }
+                })
+            }
+        {% endfor %}
+
+    </script>
 {% endblock %}

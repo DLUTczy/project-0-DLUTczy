@@ -17,6 +17,11 @@ urlpatterns = [
     path("ajax_comment", views.ajax_comment),
     path("ajax_want", views.ajax_want),
     path("ajax_cancle", views.ajax_cancle),
+    path("ajax_nick", views.ajax_nick),
+    path("ajax_mail", views.ajax_mail),
+    path("ajax_deladdress", views.ajax_deladdress),
+    path("add_address/<int:phoneID>", views.add_address,name="add_address"),
     path("infopage", views.infopage, name="infopage"),
-    path("address", views.address, name="address"),
+    path("address/<int:phoneID>", views.address, name="address"),
+    path('message', views.message, name="message"),
 ]

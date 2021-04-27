@@ -33,7 +33,7 @@
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="{% url 'logout' %}" id="navbarDropdownMenuLink"
                        role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        {{ user.username }}
+                        {% if user.nickname == "" %}{{ user.username }}{% else %} {{ user.nickname }}{% endif %}
                     </a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                         <a class="dropdown-item" href="#">个人主页</a>
@@ -129,7 +129,7 @@
                     </a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                         <a class="dropdown-item" href="{% url 'infopage' %}">个人资料设置</a>
-                        <a class="dropdown-item" href="{% url 'address' %}">收货地址</a>
+                        <a class="dropdown-item" href="{% url 'address' user.phoneID %}">收货地址</a>
                         <a class="dropdown-item" data-toggle="modal" data-target="#exampleModal" href="">注销账号</a>
                         <a class="dropdown-item" href="{% url 'logout' %}">退出登录</a>
                     </div>
@@ -148,7 +148,7 @@
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-dismiss="modal" id="cancle_model">取消</button>
-                                    <button type="button" class="btn btn-primary" id="sure_btn_1">确认</button>
+                                    <button type="button" class="btn btn-primary" data-dismiss="modal" id="sure_btn_1">确认</button>
                                 </div>
                             </div>
                         </div>
@@ -164,13 +164,12 @@
     }
 
     my("sure_btn_1").onclick = function () {
-        my("cancle_model").click();
         $.ajax({
             url:"/ajax_cancle",
             type:"get",
             data:{userID:{{user.phoneID}}},
             dataType:"json",
-            success: function (){
+            complete: function (){
                 alert("注销成功");
             }
         })

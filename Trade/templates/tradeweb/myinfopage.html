@@ -3,17 +3,137 @@
     <div class="container-fluid">
         <div class="row justify-content-center">
             <div class="col-md-8 col-center-block">
-{#                会员名 不可修改#}
+                {#                会员名 不可修改#}
                 <div> 会员名：{{ user.username }}</div>
-{#                昵称 可修改#}
-                <div>昵称：{{ user.nikename }}</div>
-{#                邮箱 可修改#}
-                <div>邮箱：{{ user.email }}</div>
-{#                学生认证的信息 不可修改#}
+                {#                昵称 可修改#}
+                <div>
+                    <span>昵称：</span>
+                    <span id="nick_before_change"><input readonly id="nick_show" type="text"
+                                                         value="{% if user.nickname == "" %} null {% else %}{{ user.nickname }}{% endif %}"></span>
+                    <span id="nick_before_change_btn"><button id="nick_btn1">修改</button></span>
+                    <span id="nick_after_change" style="display: none"><input type="text" id="nick_change"
+                                                                              value="{% if user.nickname == "" %} null {% else %}{{ user.nickname }}{% endif %}"></span>
+                    <span id="nick_after_change_btn1" style="display: none"><button id="nick_btn2">确认</button></span>
+                    <span id="nick_after_change_btn2" style="display: none"><button id="nick_btn3">取消</button></span>
+
+                </div>
+                {#                邮箱 可修改#}
+                <div>
+                    <span>邮箱：</span>
+                    <span id="mail_before_change"><input readonly id="mail_show" type="email"
+                                                         value="{{ user.email }}"></span>
+                    <span id="mail_before_change_btn"><button id="mail_btn1">修改</button></span>
+                    <span id="mail_after_change" style="display: none"><input type="email" id="mail_change"
+                                                                              value="{{ user.email }}"></span>
+                    <span id="mail_after_change_btn1" style="display: none"><button id="mail_btn2">确认</button></span>
+                    <span id="mail_after_change_btn2" style="display: none"><button id="mail_btn3">取消</button></span>
+                </div>
+                {#                学生认证的信息 不可修改#}
                 {% if user.student %}
                     <div>认证学校：{{ user.student.school.school_name }}</div>
+                {% else %}
+                    <div><a class="nav-link" href="{% url 'student' %}">学生认证</a></div>
                 {% endif %}
             </div>
         </div>
     </div>
+    <script>
+        function my(id) {
+            return document.getElementById(id);
+        }
+
+        my("nick_btn1").onclick = function () {
+            my("nick_before_change").style.display = "none";
+            {#my("nick_show").disable = false;#}
+            my("nick_before_change_btn").style.display = "none";
+            my("nick_after_change").style.display = "";
+            my("nick_after_change_btn1").style.display = "";
+            my("nick_after_change_btn2").style.display = "";
+        }
+        my("nick_btn3").onclick = function () {
+            my("nick_before_change").style.display = "";
+            {#my("nick_show").disable = true;#}
+            my("nick_before_change_btn").style.display = "";
+            my("nick_after_change").style.display = "none";
+            my("nick_after_change_btn1").style.display = "none";
+            my("nick_after_change_btn2").style.display = "none";
+
+        }
+        my("nick_btn2").onclick = function () {
+
+            my("nick_before_change").style.display = "";
+            my("nick_before_change_btn").style.display = "";
+            my("nick_after_change").style.display = "none";
+            my("nick_after_change_btn1").style.display = "none";
+            my("nick_after_change_btn2").style.display = "none";
+
+            var change = my("nick_change").value;
+            my("nick_show").value = change;
+
+
+            $.ajax({
+                url: "/ajax_nick",
+                type: "get",
+                data: {nickname: change, userID:{{ user.phoneID }}},
+                dataType: "json",
+                success: function () {
+                    alert("修改成功");
+                }
+            })
+        }
+
+        function ischeckemail() {
+            var email = my("mail_change").value;
+            if (email !== "") {
+                var reg = /^\w+((-\w+)|(\.\w+))*\@[A-Za-z0-9]+((\.|-)[A-Za-z0-9]+)*\.[A-Za-z0-9]+$/;
+                var isok = reg.test(email);
+                if (!isok) {
+                    alert("邮箱格式不正确，请重新输入！");
+                    my("mail_change").focus();
+                    return false;
+                }
+            };
+            return true;
+        }
+
+        my("mail_btn1").onclick = function () {
+            my("mail_before_change").style.display = "none";
+            my("mail_before_change_btn").style.display = "none";
+            my("mail_after_change").style.display = "";
+            my("mail_after_change_btn1").style.display = "";
+            my("mail_after_change_btn2").style.display = "";
+        }
+        my("mail_btn3").onclick = function () {
+            my("mail_before_change").style.display = "";
+            my("mail_before_change_btn").style.display = "";
+            my("mail_after_change").style.display = "none";
+            my("mail_after_change_btn1").style.display = "none";
+            my("mail_after_change_btn2").style.display = "none";
+
+        }
+        my("mail_btn2").onclick = function () {
+
+            my("mail_before_change").style.display = "";
+            my("mail_before_change_btn").style.display = "";
+            my("mail_after_change").style.display = "none";
+            my("mail_after_change_btn1").style.display = "none";
+            my("mail_after_change_btn2").style.display = "none";
+            if (!ischeckemail()){
+                return;
+            }
+            var change = my("mail_change").value;
+            my("mail_show").value = change;
+
+
+            $.ajax({
+                url: "/ajax_mail",
+                type: "get",
+                data: {mail: change, userID:{{ user.phoneID }}},
+                dataType: "json",
+                success: function () {
+                    alert("修改成功");
+                }
+            })
+        }
+    </script>
 {% endblock %}

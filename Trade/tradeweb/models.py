@@ -48,6 +48,8 @@ class Messages(models.Model):
     seq = models.IntegerField(default=0)
     type = models.CharField(max_length=10)
     contentID = models.IntegerField(default=0)
+    msgTime = models.DateTimeField(auto_now_add=True)
+    goodID = models.ForeignKey("Goods", on_delete=models.CASCADE)
 
 
 class Content_text(models.Model):

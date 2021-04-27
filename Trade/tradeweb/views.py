@@ -195,13 +195,55 @@ def ajax_want(request):
 @csrf_exempt
 def ajax_cancle(request):
     userID = request.GET["userID"]
+    # 注销账号操作 删除数据库中所有与user ID相关的数据
+    logout_view(request)
 
+
+
+@csrf_exempt
+def ajax_nick(request):
+    nickname = request.GET["nickname"]
+    phoneID = request.GET["userID"]
+    user = User.objects.get(phoneID=phoneID)
+    user.nickname = nickname
+    user.save()
     return JsonResponse(None, safe=False)
+
+
+@csrf_exempt
+def ajax_mail(request):
+    email = request.GET["mail"]
+    phoneID = request.GET["userID"]
+    user = User.objects.get(phoneID=phoneID)
+    user.email = email
+    user.save()
+    return JsonResponse(None, safe=False)
+
+
+def add_address(request, phoneID):
+    address = request.POST["address"]
+    user = User.objects.get(phoneID=phoneID)
+    Address.objects.create(userID=user, address=address).save()
+    return HttpResponseRedirect(reverse("address", args=[str(phoneID)]))
 
 
 def infopage(request):
     return render(request, "tradeweb/myinfopage.html")
 
 
-def address(request):
-    return render(request, "tradeweb/address.html")
+def address(request, phoneID):
+    addresses = Address.objects.filter(userID_id=phoneID)
+    return render(request, "tradeweb/address.html",{
+        "addresses": addresses,
+    })
+
+
+@csrf_exempt
+def ajax_deladdress(request):
+    addressID = request.GET["addressID"]
+    Address.objects.get(addressID=addressID).delete()
+    return JsonResponse(None, safe=False)
+
+
+def message(request):
+    return render(request, "tradeweb/message.html")
