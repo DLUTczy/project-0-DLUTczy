@@ -3,6 +3,8 @@ import uuid
 import time
 
 from django.contrib.auth import authenticate, login, logout
+from django.db import connection
+from django.db.models import Count, Q
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 
@@ -16,7 +18,12 @@ from tradeweb.models import *
 
 
 def index(request):
-    goods = Goods.objects.all()
+
+    user = getattr(request, 'user', None)
+    if user.is_authenticated and user.student is not None:
+        goods =Goods.objects.filter(userID__student__school_id=user.student.school_id)
+    else:
+        goods = Goods.objects.all()
     return render(request, "tradeweb/index.html", {
         "goods": goods,
     })
@@ -120,10 +127,24 @@ def ajax_school(request):
     return JsonResponse(json.dumps(list), safe=False)
 
 
-def release(request, phoneID):
+def shopping_car(request):
+    user = getattr(request, 'user', None)
+    if user.is_anonymous:
+        return HttpResponseRedirect(reverse('login'))
+    phoneID = user.phoneID
+    want_list = Wants.objects.filter(userID_id=phoneID).values("goodID_id").annotate(count=Count('goodID_id')).values('goodID',"goodID__price","goodID__goodImg","goodID__state","goodID__goodName","goodID__number", 'count')
+    return render(request, "tradeweb/wantspage.html", {
+        "want_list": want_list,
+    })
+
+
+def release(request):
+    user = getattr(request, 'user', None)
+    if user.is_anonymous:
+        return HttpResponseRedirect(reverse('login'))
+    phoneID = user.phoneID
     if request.method == "GET":
-        phoneID = int(phoneID)
-        goods = Goods.objects.filter(userID_id=phoneID)
+        goods = Goods.objects.filter(userID_id=phoneID, state="在售")
         return render(request, "tradeweb/release.html", {
             "goods": goods,
         })
@@ -144,7 +165,7 @@ def release(request, phoneID):
             if count == 0:
                 Goods.objects.create(goodID=goodID, goodName=goodName, userID=user, goodImg=image,
                                      description=description,
-                                     price=price, state="在售").save()
+                                     price=price, state="在售", number=1).save()
                 print("保存成功")
             else:
                 good = Goods.objects.get(goodID=goodID)
@@ -158,11 +179,22 @@ def release(request, phoneID):
         for cate in cate_list:
             Category.objects.create(goodID=good, category=cate).save()
         request.method = "GET"
-        return HttpResponseRedirect(reverse('release', args=[str(phoneID)]))
+        return HttpResponseRedirect(reverse('release'))
 
 
 def details(request, goodID):
+    user = getattr(request, 'user', None)
     good = Goods.objects.get(goodID=goodID)
+    if user.is_authenticated and user.phoneID == good.userID_id:
+        imgs = Detail_Images.objects.filter(goodID_id=goodID)
+        comments = Comments.objects.filter(goodID_id=goodID)
+        return render(request, "tradeweb/details.html", {
+            "good": good,
+            "imgs": imgs,
+            "comments": comments,
+        })
+    if good.state != "在售" :
+        return render(request,"tradeweb/selled.html")
     imgs = Detail_Images.objects.filter(goodID_id=goodID)
     comments = Comments.objects.filter(goodID_id=goodID)
     return render(request, "tradeweb/details.html", {
@@ -186,18 +218,19 @@ def ajax_comment(request):
 @csrf_exempt
 def ajax_want(request):
     goodID = request.GET["goodID"]
-    good = Goods.objects.get(goodID=goodID)
     userID = request.GET["userID"]
-    phone = User.objects.get(phoneID=userID)
-    Wants.objects.create(goodID=good, userID=phone).save()
+    if len(Wants.objects.filter(goodID_id=goodID, userID_id=userID)) == 0:
+        good = Goods.objects.get(goodID=goodID)
+        phone = User.objects.get(phoneID=userID)
+        Wants.objects.create(goodID=good, userID=phone).save()
     return JsonResponse(None, safe=False)
+
 
 @csrf_exempt
 def ajax_cancle(request):
     userID = request.GET["userID"]
     # 注销账号操作 删除数据库中所有与user ID相关的数据
     logout_view(request)
-
 
 
 @csrf_exempt
@@ -228,12 +261,19 @@ def add_address(request, phoneID):
 
 
 def infopage(request):
+    user = getattr(request, 'user', None)
+    if user.is_anonymous:
+        return HttpResponseRedirect(reverse('login'))
     return render(request, "tradeweb/myinfopage.html")
 
 
-def address(request, phoneID):
+def address(request):
+    user = getattr(request, 'user', None)
+    if user.is_anonymous:
+        return HttpResponseRedirect(reverse('login'))
+    phoneID = user.phoneID
     addresses = Address.objects.filter(userID_id=phoneID)
-    return render(request, "tradeweb/address.html",{
+    return render(request, "tradeweb/address.html", {
         "addresses": addresses,
     })
 
@@ -246,4 +286,35 @@ def ajax_deladdress(request):
 
 
 def message(request):
+    user = getattr(request, 'user', None)
+    if user.is_anonymous:
+        return HttpResponseRedirect(reverse('login'))
     return render(request, "tradeweb/message.html")
+
+
+def buyer(request):
+    user = getattr(request, 'user', None)
+    if user.is_anonymous:
+        return HttpResponseRedirect(reverse('login'))
+    orders = Order.objects.filter(userID_id=user.phoneID)
+    return render(request,"tradeweb/buyertrade.html", {
+        "orders": orders,
+    })
+
+
+def delwantgoods(request):
+    goodID = request.POST["goodID"]
+    phoneID = getattr(request, 'user', None).phoneID
+    Wants.objects.filter(goodID=goodID, userID=phoneID).delete()
+    return HttpResponseRedirect(reverse("shopping_car"))
+
+
+def bebought(request):
+    user = getattr(request, 'user', None)
+    if user.is_anonymous:
+        return HttpResponseRedirect(reverse('login'))
+
+    goods = Goods.objects.filter(userID_id=user.phoneID).filter(~Q(state="在售"))
+    return render(request, "tradeweb/bebought.html",{
+        "goods": goods,
+    })

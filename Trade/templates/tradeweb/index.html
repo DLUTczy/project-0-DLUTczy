@@ -11,6 +11,7 @@
                 <div class="search">
                     <div class="search-border">
                         <form action="#" method="post">
+                            {% csrf_token %}
                             <span class="text-wrap">
                                 <input type="text" class="text" name="key" >
                             </span>

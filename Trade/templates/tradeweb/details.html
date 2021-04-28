@@ -8,7 +8,7 @@
                     <div class="text-center" style="padding: 3px 10px 3px 10px">
                         <button id="detail_btn" style="margin: 3px 10px 3px 10px">商品详情</button>
                         <button id="comment_btn" style="margin: 3px 10px 3px 10px">留言</button>
-                        <button id="similar_btn" style="margin: 3px 10px 3px 10px">类似商品</button>
+
                     </div>
                     {#商品详情#}
                     <div class="row " id="detail_part">
@@ -43,17 +43,16 @@
                             <div>
                                 Price {{ good.price }}
                             </div>
-                            <div style="padding: 3px 2px 3px ">
+                            {% if user.phoneID != good.userID_id %}
+                                <div style="padding: 3px 2px 3px ">
                                 <span>
                                     <button id="wants" class="badge badge-danger">添加购物车</button>
                                 </span>
-                                <span>
-                                    <a class="badge badge-primary" href="{% url 'message' %}" >联系卖家</a>
-                                </span>
-                            </div>
-                            <div>
-                                <button class="btn btn-warning">购买</button>
-                            </div>
+                                </div>
+                                <div>
+                                    <button class="btn btn-warning">购买</button>
+                                </div>
+                            {% endif %}
                         </div>
                     </div>
 
@@ -67,7 +66,11 @@
                             <ul class="list-unstyled" id="com_list">
                                 {% for comment in comments %}
                                     <li>
-                                        <span style="font-size: 18px;font-weight: bold">{{ comment.userID.username }}</span>
+                                        <span style="font-size: 18px;font-weight: bold">{% if comment.userID.nickname == "" %}
+                                            {{ comment.userID.username }}
+                                        {% else %}
+                                            {{ comment.userID.nickname }}
+                                        {% endif %} </span>
                                         <span>{{ comment.content }}</span>
                                     </li>
                                 {% endfor %}
@@ -76,9 +79,6 @@
                         </div>
                     </div>
                     {# 类似商品 #}
-                    <div id="similar_part" style="display:none;">
-                        类似商品
-                    </div>
                 {% else %}
                     <div>卖掉了</div>
                 {% endif %}
@@ -93,18 +93,14 @@
         my("detail_btn").onclick = function () {
             my("detail_part").style.display = ""
             my("comment_part").style.display = "none"
-            my("similar_part").style.display = "none"
+
         }
         my("comment_btn").onclick = function () {
             my("detail_part").style.display = "none"
             my("comment_part").style.display = ""
-            my("similar_part").style.display = "none"
+
         }
-        my("similar_btn").onclick = function () {
-            my("detail_part").style.display = "none"
-            my("comment_part").style.display = "none"
-            my("similar_part").style.display = ""
-        }
+
         my("com_btn").onclick = function () {
             var com = my("txt").value.replace(/(^\s*)|(\s*$)/g, '');
             if (com == null || com == "" || com == undefined) {
@@ -121,11 +117,20 @@
                         var new_span2 = document.createElement("span");
                         new_span1.style.fontSize = "18px";
                         new_span1.style.fontWeight = "bold";
-                        new_span1.innerHTML = "{{ user.username }}";
+                        {% if user.nickname == ""%}
+                            new_span1.innerHTML = "{{ user.username }}";
+                        {% else %}
+                            new_span1.innerHTML = "{{ user.nickname }}";
+                        {% endif %}
+
                         new_span2.innerHTML = com;
                         new_li.appendChild(new_span1);
+
                         new_li.appendChild(new_span2);
                         my("com_list").appendChild(new_li);
+                    },
+                    error: function () {
+                        alert("请先登录")
                     }
                 })
             }
@@ -136,8 +141,11 @@
                 type: "get",
                 data: {userID:{{user.phoneID}}, goodID:{{ good.goodID }}},
                 dataType: "json",
-                success: function (){
+                success: function () {
                     alert("添加成功")
+                },
+                error: function () {
+                    alert("请先登录")
                 }
             })
         }

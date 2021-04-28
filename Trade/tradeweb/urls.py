@@ -12,7 +12,7 @@ urlpatterns = [
     path("student", views.student, name="student"),
     path("ajax_school", views.ajax_school),
     path("media/<slug:path>", serve, {"document_root":MEDIA_ROOT}),
-    path("release/<int:phoneID>", views.release, name="release"),
+    path("release", views.release, name="release"),
     path("details/<int:goodID>", views.details, name="details"),
     path("ajax_comment", views.ajax_comment),
     path("ajax_want", views.ajax_want),
@@ -22,6 +22,11 @@ urlpatterns = [
     path("ajax_deladdress", views.ajax_deladdress),
     path("add_address/<int:phoneID>", views.add_address,name="add_address"),
     path("infopage", views.infopage, name="infopage"),
-    path("address/<int:phoneID>", views.address, name="address"),
+    path("address", views.address, name="address"),
     path('message', views.message, name="message"),
+    path("shopping_car", views.shopping_car, name="shopping_car"),
+    path("buyer", views.buyer, name="buyer"),
+    path("delwantgoods", views.delwantgoods,name="delwantgoods"),
+    path("bebought", views.bebought, name="bebought"),
+
 ]

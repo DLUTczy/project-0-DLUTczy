@@ -9,7 +9,7 @@
                     <button class="btn btn-primary" id="add_btn">发布商品</button>
                 </div>
                 <div id="changeblock" class="border" style="display:none;padding:10px 5px 5px 10px">
-                    <form action="{% url 'release' user.phoneID %}" method="post" enctype="multipart/form-data">
+                    <form action="{% url 'release'  %}" method="post" enctype="multipart/form-data">
                         {% csrf_token %}
                         <input name="userID" type="hidden" contenteditable="false" value="{{ user.phoneID }}">
                         <div class="form-group">

@@ -1,4 +1,83 @@
 {% extends "tradeweb/layout.html" %}
 {% block body %}
-    展示添加的商品 可多选下单 可删除 重复商品计数
+    <div class="container-fluid">
+        <div class="row justify-content-md-center">
+            <div class="col-md-8">
+                <div style="background-color: #e2e6ea;padding: 5px 10px">
+                    <span style="padding-left: 2px"><label id="alls_label"><input type="checkbox"
+                                                                                  id="all_select">全选</label></span>
+                    <span style="padding-left: 20px"><label>价格：</label></span>
+                    <input readonly id="price" type="number" placeholder="0.0" min="0" step="0.01">
+                    <span style="padding-left: 5px"><label>元</label></span>
+                    <button id="buy_btn" style="margin-left: 50px">购买</button>
+                </div>
+                <div>
+                    <ul class="list-unstyled">
+                        {% for want in want_list %}
+                            <li id="li_{{ want.goodID }}" style="padding-top: 10px;">
+                                <a class="border" href="{% url 'details' want.goodID %}" style="float: left;margin-top:3px;padding: 10px 10px;background-color: #fffff0; -moz-border-radius: 10px;-webkit-border-radius: 10px;
+        border-radius: 10px;">
+                                    <span>
+                                        {% if want.goodID__state == "在售" %}
+                                        <input type="checkbox" id="check_{{ want.goodID }}">
+                                        {% else %}
+                                            <input type="checkbox" disabled="disabled" id="check_{{ want.goodID }}">
+                                        {% endif %}
+                                        <img src="{{ MEDIA_URL }}{{ want.goodID__goodImg }}"
+                                             style="object-fit: cover; width: 50px; height: 50px">
+                                    </span>
+                                    <span style="position: relative">
+                                            <label style="float: top">{{ want.goodID__goodName }}</label>
+                                            <label style="float: bottom">{{ want.goodID__price }}</label>
+                                        </span>
+                                </a>
+                                 <form method="post" action="{% url 'delwantgoods' %}">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="goodID" value="{{ want.goodID }}">
+                                    <button type="submit" id="{{ want.goodID }}" style="float: right;margin-top: 10px">
+                                        删除
+                                    </button>
+                                </form>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        function my(id) {
+            return document.getElementById(id);
+        }
+        my("all_select").onchange = function () {
+            var sum = 0;
+            if (my("all_select").checked === true) {
+                {% for want in want_list %}
+                    if (my("check_{{ want.goodID }}").disabled === false){
+                        my("check_{{ want.goodID }}").checked = true;
+                        sum = sum + {{ want.goodID__price }};
+                    }
+                {% endfor %}
+            } else {
+                {% for want in want_list %}
+                    if (my("check_{{ want.goodID }}").disabled === false){
+                        my("check_{{ want.goodID }}").checked = false;
+                    }
+                {% endfor %}
+            }
+            my("price").value = sum;
+        }
+        {% for want in want_list %}
+            my("check_{{ want.goodID }}").onchange = function () {
+                var sum = 0;
+                {% for want2 in want_list %}
+                    if (my("check_{{ want2.goodID }}").disabled === false && my("check_{{ want2.goodID }}").checked === true)
+                        sum = sum + {{ want2.goodID__price }};
+                {% endfor %}
+                my("price").value = sum;
+            }
+        {% endfor %}
+
+
+    </script>
 {% endblock %}
