@@ -43,7 +43,7 @@
                             <div>
                                 Price {{ good.price }}
                             </div>
-                            {% if user.phoneID != good.userID_id %}
+                            {% if user.phoneID != good.userID_id and good.state == "在售" %}
                                 <div style="padding: 3px 2px 3px ">
                                 <span>
                                     <button id="wants" class="badge badge-danger">添加购物车</button>
@@ -51,6 +51,11 @@
                                 </div>
                                 <div>
                                     <button class="btn btn-warning">购买</button>
+                                </div>
+                            {% endif %}
+                            {% if good.state != "在售" %}
+                                <div>
+                                    <button class="badge badge-info">卖掉了</button>
                                 </div>
                             {% endif %}
                         </div>

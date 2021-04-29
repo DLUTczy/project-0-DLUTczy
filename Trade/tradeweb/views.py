@@ -18,10 +18,9 @@ from tradeweb.models import *
 
 
 def index(request):
-
     user = getattr(request, 'user', None)
     if user.is_authenticated and user.student is not None:
-        goods =Goods.objects.filter(userID__student__school_id=user.student.school_id)
+        goods = Goods.objects.filter(userID__student__school_id=user.student.school_id)
     else:
         goods = Goods.objects.all()
     return render(request, "tradeweb/index.html", {
@@ -132,7 +131,8 @@ def shopping_car(request):
     if user.is_anonymous:
         return HttpResponseRedirect(reverse('login'))
     phoneID = user.phoneID
-    want_list = Wants.objects.filter(userID_id=phoneID).values("goodID_id").annotate(count=Count('goodID_id')).values('goodID',"goodID__price","goodID__goodImg","goodID__state","goodID__goodName","goodID__number", 'count')
+    want_list = Wants.objects.filter(userID_id=phoneID).values("goodID_id").annotate(count=Count('goodID_id')).values(
+        'goodID', "goodID__price", "goodID__goodImg", "goodID__state", "goodID__goodName", "goodID__number", 'count')
     return render(request, "tradeweb/wantspage.html", {
         "want_list": want_list,
     })
@@ -193,8 +193,7 @@ def details(request, goodID):
             "imgs": imgs,
             "comments": comments,
         })
-    if good.state != "在售" :
-        return render(request,"tradeweb/selled.html")
+
     imgs = Detail_Images.objects.filter(goodID_id=goodID)
     comments = Comments.objects.filter(goodID_id=goodID)
     return render(request, "tradeweb/details.html", {
@@ -227,13 +226,6 @@ def ajax_want(request):
 
 
 @csrf_exempt
-def ajax_cancle(request):
-    userID = request.GET["userID"]
-    # 注销账号操作 删除数据库中所有与user ID相关的数据
-    logout_view(request)
-
-
-@csrf_exempt
 def ajax_nick(request):
     nickname = request.GET["nickname"]
     phoneID = request.GET["userID"]
@@ -253,11 +245,14 @@ def ajax_mail(request):
     return JsonResponse(None, safe=False)
 
 
-def add_address(request, phoneID):
+def add_address(request):
+    user = getattr(request, 'user', None)
+    if user.is_anonymous:
+        return HttpResponseRedirect(reverse('login'))
     address = request.POST["address"]
-    user = User.objects.get(phoneID=phoneID)
+    user = User.objects.get(phoneID=user.phoneID)
     Address.objects.create(userID=user, address=address).save()
-    return HttpResponseRedirect(reverse("address", args=[str(phoneID)]))
+    return HttpResponseRedirect(reverse("address"))
 
 
 def infopage(request):
@@ -296,8 +291,9 @@ def buyer(request):
     user = getattr(request, 'user', None)
     if user.is_anonymous:
         return HttpResponseRedirect(reverse('login'))
-    orders = Order.objects.filter(userID_id=user.phoneID)
-    return render(request,"tradeweb/buyertrade.html", {
+    beforeOrder = BeforeOrder.objects.filter(userID_id=user.phoneID, status=1)
+    orders = Order.objects.filter(beforeOrder__in=beforeOrder).order_by("-orderTime")
+    return render(request, "tradeweb/buyertrade.html", {
         "orders": orders,
     })
 
@@ -313,8 +309,126 @@ def bebought(request):
     user = getattr(request, 'user', None)
     if user.is_anonymous:
         return HttpResponseRedirect(reverse('login'))
-
     goods = Goods.objects.filter(userID_id=user.phoneID).filter(~Q(state="在售"))
-    return render(request, "tradeweb/bebought.html",{
-        "goods": goods,
+    orders = Order.objects.filter(goodID__in=goods)
+
+    return render(request, "tradeweb/bebought.html", {
+        "orders": orders,
     })
+
+
+def placeOrder(request):
+    user = getattr(request, 'user', None)
+    phoneID = user.phoneID
+    goodID_list = []
+    data = request.POST
+    for key, value in data.items():
+        if key.startswith("check_"):
+            goodID = key.split("_")[1]
+            goodID_list.append(int(goodID))
+
+    orderID = int(time.time() * 1000000)
+    addresses = Address.objects.filter(userID_id=user.phoneID)
+    if len(addresses) == 0:
+        return HttpResponseRedirect(reverse('address'))
+
+    address = addresses.first()
+    beforeOrder = BeforeOrder()
+    totle_money = 0
+    if goodID_list:
+        beforeOrder.orderID = orderID
+        beforeOrder.userID = user
+        beforeOrder.save()
+    else:
+        return HttpResponseRedirect(reverse("shopping_car"))
+    for goodID in goodID_list:
+        order = Order()
+        order.beforeOrder_id = orderID
+        good = Goods.objects.get(goodID=goodID)
+        totle_money = totle_money+good.price
+        good.state = "被拍下"
+        good.save()
+        order.goodID = good
+        order.userID = user
+        order.address = address
+        order.remark = ""
+        order.got = 3
+        order.save()
+
+    orders = Order.objects.filter(beforeOrder=beforeOrder)
+    return render(request, "tradeweb/placeOrder.html", {
+        "orders": orders,
+        "beforeOrder": beforeOrder,
+        "addresses": addresses,
+        "totle_money": totle_money,
+    })
+
+
+def unpaid(request):
+    user = getattr(request, 'user', None)
+    if user.is_anonymous:
+        return HttpResponseRedirect(reverse('login'))
+    beforeOrders = BeforeOrder.objects.filter(status=0, userID_id=user.phoneID)
+    return render(request, "tradeweb/unpaid.html",{
+        "beforeOrders": beforeOrders,
+    })
+
+
+def topay(request, orderID):
+    user = getattr(request, 'user', None)
+    beforeOrder = BeforeOrder.objects.get(orderID=orderID)
+    orders = Order.objects.filter(beforeOrder=beforeOrder)
+    addresses = Address.objects.filter(userID_id=user.phoneID)
+    totle_money = 0
+    for order in orders:
+        totle_money=totle_money+order.goodID.price
+
+    return render(request, "tradeweb/placeOrder.html", {
+        "orders": orders,
+        "beforeOrder": beforeOrder,
+        "addresses": addresses,
+        "totle_money":totle_money,
+    })
+
+
+def del_BeforeOrder(request):
+    before_OrderID = request.POST["before_OrderID"]
+    user = getattr(request, 'user', None)
+    beforeOrder = BeforeOrder.objects.get(orderID=before_OrderID)
+    orders = Order.objects.filter(beforeOrder=beforeOrder)
+    for order in orders:
+        good = Goods.objects.get(goodID=order.goodID_id)
+        good.state = "在售"
+        good.save()
+        order.delete()
+    beforeOrder.delete()
+    return HttpResponseRedirect(reverse("unpaid"))
+
+
+def payOrder(request):
+    if request.method == "POST":
+        address = request.POST["address"]
+        beforeOrder = request.POST["beforeOrder"]
+        beforeOrder = BeforeOrder.objects.get(orderID=beforeOrder)
+        orders = Order.objects.filter(beforeOrder=beforeOrder)
+        for order in orders:
+            good = Goods.objects.get(goodID=order.goodID_id)
+            good.state = "已售"
+            good.save()
+            order.address_id=address
+            remark = request.POST["remark_"+str(order.orderID)]
+            order.remark = remark
+            order.got=0
+            order.save()
+        beforeOrder.status = 1
+        beforeOrder.save()
+        return render(request, "tradeweb/pay_success.html")
+
+
+def got_sure(request):
+    if request.method == "POST":
+        orderID = request.POST["orderID"]
+        order = Order.objects.get(orderID=orderID)
+        order.got = 1
+        order.save()
+        return HttpResponseRedirect(reverse('buyer'))

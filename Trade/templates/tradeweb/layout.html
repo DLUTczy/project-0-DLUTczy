@@ -28,7 +28,8 @@
 
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link">{% if user.nickname == "" %}{{ user.username }}{% else %} {{ user.nickname }}{% endif %}</a>
+                    <a class="nav-link">
+                        {% if user.nickname == "" %}{{ user.username }}{% else %} {{ user.nickname }}{% endif %}</a>
                 </li>
             {% else %}
                 <li class="nav-item">
@@ -45,8 +46,15 @@
             <li class="nav-item">
                 <a class="nav-link" href="{% url 'shopping_car' %}">购物车</a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{% url 'buyer' %} ">我的订单</a>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink"
+                   role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    我的订单
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                    <a class="dropdown-item" href="{% url 'buyer' %}">已支付</a>
+                    <a class="dropdown-item" href="{% url 'unpaid' %}">未支付</a>
+                </div>
             </li>
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink"
@@ -54,7 +62,7 @@
                     卖家中心
                 </a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                    <a class="dropdown-item" href="{% url 'release' %}">发布的商品</a>
+                    <a class="dropdown-item" href="{% url 'release' %}">正在卖的商品</a>
                     <a class="dropdown-item" href="{% url 'bebought' %}">已卖出的商品</a>
                 </div>
             </li>
@@ -66,52 +74,14 @@
                 <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                     <a class="dropdown-item" href="{% url 'infopage' %}">个人资料设置</a>
                     <a class="dropdown-item" href="{% url 'address' %}">收货地址</a>
-                    <a class="dropdown-item" data-toggle="modal" data-target="#exampleModal" href="">注销账号</a>
                     <a class="dropdown-item" href="{% url 'logout' %}">退出登录</a>
                 </div>
-                <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
-                     aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="exampleModalLabel">注意</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                            <div class="modal-body">
-                                慎重考虑是否要注销账号，此过程不可逆！
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal" id="cancle_model">
-                                    取消
-                                </button>
-                                <button type="button" class="btn btn-primary" data-dismiss="modal" id="sure_btn_1">确认
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+
             </li>
         </ul>
     </div>
 </nav>
-<script>
-    function my(id) {
-        return document.getElementById(id)
-    }
-    my("sure_btn_1").onclick = function () {
-        $.ajax({
-            url: "/ajax_cancle",
-            type: "get",
-            data: {userID:{{user.phoneID}}},
-            dataType: "json",
-            complete: function () {
-                alert("注销成功");
-            }
-        })
-    }
-</script>
+
 {% block body %}
 {% endblock %}
 </body>

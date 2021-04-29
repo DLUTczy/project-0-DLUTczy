@@ -33,7 +33,7 @@ class Goods(models.Model):
     goodImg = models.ImageField(upload_to="img")
     description = models.CharField(max_length=1000)
     price = models.DecimalField(max_digits=20, decimal_places=2)
-    state = models.CharField(max_length=10)
+    state = models.CharField(max_length=10)  # 在售 被拍下 已售
     number = models.IntegerField()
 
 
@@ -88,8 +88,17 @@ class Order(models.Model):
     orderTime = models.DateTimeField(auto_now_add=True)
     remark = models.CharField(max_length=100)
     address = models.ForeignKey("Address", on_delete=models.CASCADE)
+    beforeOrder = models.ForeignKey("BeforeOrder", on_delete=models.CASCADE)
+    got = models.IntegerField()  # 收到商品为 1 未收到 0
 
 
 class Category(models.Model):
     goodID = models.ForeignKey("Goods", on_delete=models.CASCADE)
     category = models.CharField(max_length=20)
+
+
+class BeforeOrder(models.Model):
+    orderID = models.BigIntegerField(primary_key=True)
+    orderTime = models.DateTimeField(auto_now_add=True)
+    status = models.IntegerField(default=0)  # 0 代表未支付 1 代表支付
+    userID = models.ForeignKey("User", on_delete=models.CASCADE)

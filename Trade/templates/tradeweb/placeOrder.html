@@ -1,0 +1,57 @@
+{% extends "tradeweb/layout.html" %}
+{% block body %}
+    <div class="container-fluid">
+        <div class="row justify-content-md-center">
+            <div class="col-md-8">
+                <form method="post" action="{% url 'payOrder' %}">
+                {% csrf_token %}
+                    <div class="form-group">
+                        <label for="select_address">收货地址：</label>
+                        <select name="address" id="select_address" class="form-control">
+                            {% for address in addresses %}
+                                <option value="{{ address.addressID }}">{{ address.address }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <input type="hidden" name="beforeOrder" value="{{ beforeOrder.orderID }}">
+                    <div class="row">
+                        <div class="col-md-4">
+                            商品名称
+                        </div>
+                        <div class="col-md-2">
+                            价格
+                        </div>
+                        <div class="col-md-2">
+                            卖家
+                        </div>
+                        <div class="col-md-4">
+                            备注
+                        </div>
+                    </div>
+                    <HR>
+                    <div>
+                        {% for order in orders %}
+                            <div class="row" style="padding-top: 20px">
+                                <div class="col-md-4 border-right">
+                                    {{ order.goodID.goodName }}
+                                </div>
+                                <div class="col-md-2 border-right">
+                                    {{ order.goodID.price }}
+                                </div>
+                                <div class="col-md-2 border-right">
+                                    {{ order.goodID.userID.nickname }}
+                                </div>
+                                <div class="col-md-4">
+                                    <input name="remark_{{ order.orderID }}"  value="{{ order.remark }}">
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <HR>
+                    <div>总金额为：<label>{{ totle_money }}</label></div>
+                    <div><input class="btn btn-warning" type="submit" value="支付"></div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

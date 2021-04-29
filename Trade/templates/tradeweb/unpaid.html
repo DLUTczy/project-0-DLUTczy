@@ -1,0 +1,55 @@
+{% extends "tradeweb/layout.html" %}
+{% block body %}
+    <div class="container-fluid">
+        <div class="row justify-content-md-center">
+            <div class="col-md-8">
+                <div class="row" style="padding-top: 20px">
+                    <div class="col-md-3">
+                        订单编号
+                    </div>
+                    <div class="col-md-3">
+                        支付状态
+                    </div>
+                    <div class="col-md-3">
+                        下单时间
+                    </div>
+                    <div class="col-md-3">
+                        操作
+                    </div>
+                </div>
+                {% for beforeOrder in beforeOrders %}
+                    <div class="row" style="padding-top: 20px">
+                        <div class="col-md-9">
+                            <a href="{% url 'topay' beforeOrder.orderID %}">
+                                <div class="row">
+                                    <div class="col-md-4 border-right">
+                                        {{ beforeOrder.orderID }}
+                                    </div>
+                                    <div class="col-md-4 border-right">
+                                        {% if beforeOrder.status == 0 %}
+                                            未支付
+                                        {% endif %}
+                                    </div>
+                                    <div class="col-md-4 border-right">
+                                        {{ beforeOrder.orderTime | date:"Y-m-d H:i:s" }}
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-md-3">
+                            <form method="post" action="{% url 'del_BeforeOrder' %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="before_OrderID" value="{{ beforeOrder.orderID }}">
+                                <input type="submit" value="删除">
+                            </form>
+
+                        </div>
+                    </div>
+
+                {% endfor %}
+
+
+            </div>
+        </div>
+    </div>
+{% endblock %}

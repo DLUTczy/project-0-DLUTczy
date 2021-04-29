@@ -5,7 +5,7 @@
             <div class="col-md-8" id="address">
 
                 <div style="background-color: #e2e6ea; padding: 10px 5px">
-                    <form method="post" action="{% url 'add_address' user.phoneID %}">
+                    <form method="post" action="{% url 'add_address' %}">
                         {% csrf_token %}
                         <button class="btn-primary" type="submit">添加地址</button>
                         <input type="text" name="address" width="100%" required placeholder="省 市 区/县 乡/街道 门牌号">

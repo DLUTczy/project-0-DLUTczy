@@ -1,8 +1,56 @@
 {% extends "tradeweb/layout.html" %}
+{#订单页1#}
 {% block body %}
     <div class="container-fluid">
         <div class="row justify-content-md-center">
             <div class="col-md-8">
+                <div class="row">
+                    <div class="col-md-5">
+                        商品
+                    </div>
+                    <div class="col-md-2">
+                        下单时间
+                    </div>
+                    <div class="col-md-2">
+                        价格
+                    </div>
+                    <div class="col-md-2">
+                        备注
+                    </div>
+                    <div class="col-md-1">
+                        收货状态
+                    </div>
+                </div>
+                {% for order in orders %}
+                    <div class="row" style="padding-top: 20px">
+                        <div class="col-md-1">
+                            <img style="width: 50px; height: 50px" src="{{ MEDIA_URL }}{{ order.goodID.goodImg }}">
+                        </div>
+                        <div class="col-md-4">
+                            <a href="{% url 'details' order.goodID.goodID %}">{{ order.goodID.goodName }}</a>
+                        </div>
+                        <div class="col-md-2">
+                            {{ order.orderTime | date:"Y-m-d H:i:s" }}
+                        </div>
+                        <div class="col-md-2">
+                            {{ order.goodID.price }}
+                        </div>
+                        <div class="col-md-2">
+                            {{ order.remark }}
+                        </div>
+                        <div class="col-md-1">
+                            {% if order.got == 0 %}
+                                <form method="post" action="{% url 'got_sure' %}">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="orderID" value="{{ order.orderID }}">
+                                    <input type="submit" value="确认收货">
+                                </form>
+                            {% else %}
+                                <label class="badge badge-success">已收货</label>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
 
             </div>
         </div>
