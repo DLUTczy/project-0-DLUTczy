@@ -54,7 +54,7 @@
                                 </span>
                                 </div>
                                 <div>
-                                <form action="{% url 'placeOrder' %}" method="post">
+                                <form action="{% url 'placeOrder'  good.goodID  %}" method="post">
                                     {% csrf_token %}
                                     <input type="hidden" name="check_{{ good.goodID }}">
                                     <button class="btn btn-warning">购买</button>

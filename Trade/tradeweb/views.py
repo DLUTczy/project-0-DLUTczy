@@ -317,14 +317,20 @@ def bebought(request):
     })
 
 
-def placeOrder(request):
+def placeOrder(request, url):
     user = getattr(request, 'user', None)
     goodID_list = []
     data = request.POST
     for key, value in data.items():
         if key.startswith("check_"):
-            goodID = key.split("_")[1]
-            goodID_list.append(int(goodID))
+            goodID = int(key.split("_")[1])
+            if Goods.objects.get(goodID=goodID).state != "在售":
+                if url == "shopping_car":
+                    return HttpResponseRedirect(reverse('shopping_car'))
+                else:
+                    return HttpResponseRedirect(reverse('details', args=[str(url)]))
+            else:
+                goodID_list.append(goodID)
 
     orderID = int(time.time() * 1000000)
     addresses = Address.objects.filter(userID_id=user.phoneID)

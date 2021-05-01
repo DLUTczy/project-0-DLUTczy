@@ -14,7 +14,7 @@
                 </div>
                 <div>
                     <ul class="list-unstyled">
-                        <form method="post" action="{% url 'placeOrder' %}" id="form">
+                        <form method="post" action="{% url 'placeOrder' "shopping_car" %}" id="form">
                             {% csrf_token %}
                             {% for want in want_list %}
                                 <li id="li_{{ want.goodID }}" style="padding-top: 10px;">
