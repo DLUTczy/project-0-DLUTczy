@@ -38,11 +38,15 @@
                         </div>
 
                         <div class="col-md-6">
-                            <div>{{ good.goodName }}</div>
+                            <HR>
+                            <div><strong>{{ good.goodName }}</strong></div>
+                            <HR>
                             <div>{{ good.description }}</div>
+                            <HR>
                             <div>
-                                Price {{ good.price }}
+                                <h4 style="color: red">￥ {{ good.price }}</h4>
                             </div>
+                            <HR>
                             {% if user.phoneID != good.userID_id and good.state == "在售" %}
                                 <div style="padding: 3px 2px 3px ">
                                 <span>
@@ -50,7 +54,11 @@
                                 </span>
                                 </div>
                                 <div>
+                                <form action="{% url 'placeOrder' %}" method="post">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="check_{{ good.goodID }}">
                                     <button class="btn btn-warning">购买</button>
+                                </form>
                                 </div>
                             {% endif %}
                             {% if good.state != "在售" %}

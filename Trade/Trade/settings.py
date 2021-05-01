@@ -24,7 +24,7 @@ SECRET_KEY = 'django-insecure-&fh*_per&(6=$(ecec@t#2#pf8q504cbzcnlf&+1l2p(gicjuq
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["192.168.43.183", "127.0.0.1"]
 
 AUTH_USER_MODEL = 'tradeweb.User'
 # Application definition

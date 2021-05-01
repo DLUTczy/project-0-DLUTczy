@@ -18,7 +18,9 @@
                             {% csrf_token %}
                             {% for want in want_list %}
                                 <li id="li_{{ want.goodID }}" style="padding-top: 10px;">
-                                    <a class="border" href="{% url 'details' want.goodID %}" style="float: left;margin-top:3px;padding: 10px 10px;background-color: #fffff0; -moz-border-radius: 10px;-webkit-border-radius: 10px;
+                                    <div class="row">
+                                        <div class="col-md-8">
+                                            <a class="border" href="{% url 'details' want.goodID %}" style="float: left;margin-top:3px;padding: 10px 10px;background-color: #fffff0; -moz-border-radius: 10px;-webkit-border-radius: 10px;
         border-radius: 10px;">
                                     <span>
                                         {% if want.goodID__state == "在售" %}
@@ -36,10 +38,16 @@
                                             <label style="float: bottom">{{ want.goodID__price }}</label>
                                         </span>
                                     </a>
-                                    <button type="button" id="del_{{ want.goodID }}"
+                                        </div>
+
+                                    <div class="col-md-2 offset-2">
+                                        <button type="button" id="del_{{ want.goodID }}"
                                             style="float: right;margin-top: 10px">
                                         删除
                                     </button>
+                                    </div>
+                                    </div>
+
                                 </li>
                             {% endfor %}
                         </form>
@@ -87,7 +95,6 @@
         }
         {% for want in want_list %}
             my("del_{{ want.goodID }}").onclick = function () {
-                alert("表单")
                 var form = document.createElement("form")
                 var input = document.createElement("input")
                 var input2 = document.createElement("input")

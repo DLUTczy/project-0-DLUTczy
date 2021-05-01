@@ -20,9 +20,9 @@ from tradeweb.models import *
 def index(request):
     user = getattr(request, 'user', None)
     if user.is_authenticated and user.student is not None:
-        goods = Goods.objects.filter(userID__student__school_id=user.student.school_id)
+        goods = Goods.objects.filter(userID__student__school_id=user.student.school_id).filter(state="在售")
     else:
-        goods = Goods.objects.all()
+        goods = Goods.objects.all().filter(state="在售")
     return render(request, "tradeweb/index.html", {
         "goods": goods,
     })
@@ -319,7 +319,6 @@ def bebought(request):
 
 def placeOrder(request):
     user = getattr(request, 'user', None)
-    phoneID = user.phoneID
     goodID_list = []
     data = request.POST
     for key, value in data.items():

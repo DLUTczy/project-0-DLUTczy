@@ -9,6 +9,7 @@ class User(AbstractUser):
     phoneID = models.BigIntegerField(primary_key=True)
     nickname = models.CharField(max_length=20)
     student = models.ForeignKey("Student", on_delete=models.CASCADE, blank=True, null=True)
+    REQUIRED_FIELDS = ['email', 'phoneID','nickname', 'password']
 
 
 class Student(models.Model):
