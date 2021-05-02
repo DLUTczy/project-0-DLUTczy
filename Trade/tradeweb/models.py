@@ -3,6 +3,8 @@ from django.db import models
 
 
 # Create your models here.
+from django.db.models.signals import pre_delete
+from django.dispatch import receiver
 
 
 class User(AbstractUser):
@@ -38,10 +40,20 @@ class Goods(models.Model):
     number = models.IntegerField()
 
 
+@receiver(pre_delete, sender=Goods)
+def goodImg_delete(sender, instance, **kwargs):
+    instance.goodImg.delete(False)
+
+
 class Detail_Images(models.Model):
     goodID = models.ForeignKey("Goods", on_delete=models.CASCADE)
     img = models.ImageField(upload_to="img")
     priority = models.IntegerField()
+
+
+@receiver(pre_delete, sender=Detail_Images)
+def detailImg_delete(sender, instance, **kwargs):
+    instance.img.delete(False)
 
 
 class Messages(models.Model):

@@ -1,4 +1,5 @@
 import json
+import os
 import uuid
 import time
 
@@ -170,10 +171,6 @@ def release(request):
             else:
                 good = Goods.objects.get(goodID=goodID)
                 Detail_Images.objects.create(goodID=good, img=image, priority=(count - 1)).save()
-            with open(settings.MEDIA_ROOT + image.name, 'wb+') as f:
-                for chunk in image.chunks():
-                    f.write(chunk)
-                f.close()
             count += 1
         good = Goods.objects.get(goodID=goodID)
         for cate in cate_list:
@@ -437,3 +434,50 @@ def got_sure(request):
         order.got = 1
         order.save()
         return HttpResponseRedirect(reverse('buyer'))
+
+
+def edit(request):
+    goodID = request.POST["goodID"]
+    good = Goods.objects.get(goodID=goodID)
+    categorys = Category.objects.filter(goodID_id=goodID)
+    category = ""
+    for c in categorys:
+        category = category+c.category+" "
+    return  render(request, "tradeweb/edit.html", {
+        "good":good,
+        "category": category,
+    })
+
+
+def edit_sure(request):
+    goodID = request.POST["goodID"]
+    good = Goods.objects.get(goodID=goodID)
+    # 删除 之前存储的所有图片
+    imags = Detail_Images.objects.filter(goodID=good)
+    for img in imags:
+        img.delete()
+    # 修改 goodID下的所有内容
+    goodName = request.POST["goodName"]
+    category = request.POST["category"]
+    description = request.POST["description"]
+    price = request.POST["price"]
+    Category.objects.filter(goodID_id=goodID).delete()
+
+    categorys = category.split(" ")
+    for c in categorys:
+        Category.objects.create(goodID=good, category=c).save()
+    imageList = request.FILES.getlist("images")
+
+    count = 0
+    for image in imageList:
+        if count == 0:
+            good.goodName = goodName
+            good.price = price
+            good.description = description
+            good.goodImg = image
+            good.save()
+        else:
+            Detail_Images.objects.create(goodID=good, img=image, priority=(count - 1)).save()
+        count += 1
+
+    return HttpResponseRedirect(reverse('details',args=[str(goodID)]))

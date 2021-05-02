@@ -54,11 +54,19 @@
                                 </span>
                                 </div>
                                 <div>
-                                <form action="{% url 'placeOrder'  good.goodID  %}" method="post">
-                                    {% csrf_token %}
-                                    <input type="hidden" name="check_{{ good.goodID }}">
-                                    <button class="btn btn-warning">购买</button>
-                                </form>
+                                    <form action="{% url 'placeOrder'  good.goodID %}" method="post">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="check_{{ good.goodID }}">
+                                        <button class="btn btn-warning">购买</button>
+                                    </form>
+                                </div>
+                            {% else %}
+                                <div>
+                                    <form action="{% url 'edit' %}" method="post">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="goodID" value="{{ good.goodID }}">
+                                        <button class="btn btn-warning">编辑</button>
+                                    </form>
                                 </div>
                             {% endif %}
                             {% if good.state != "在售" %}

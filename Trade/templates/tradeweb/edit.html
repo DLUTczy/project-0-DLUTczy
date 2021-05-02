@@ -1,0 +1,60 @@
+{% extends "tradeweb/layout.html" %}
+{% block body %}
+    <div class="container-fluid">
+        <div class="row justify-content-md-center">
+            <div class="col-md-8">
+                <form action="{% url 'edit_sure'  %}" method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                    <input type="hidden" name="goodID" value="{{ good.goodID }}">
+                        <div class="form-group">
+                            <label for="goodName">商品名称</label>
+                            <input name="goodName" id="goodName" class="form-control" type="text" maxlength="100"
+                                   required="required" value="{{ good.goodName }}">
+                        </div>
+                        <div class="form-group">
+                            <label for="image">商品图片 可多选</label>
+                            <input name="images" accept="image/*" type="file" multiple="multiple" class="form-control" id="image" required="required">
+                        </div>
+                        <div class="form-group">
+                            <label for="category">商品标签 空格隔开</label>
+                            <input name="category" class="form-control" type="text" id="category" required="required" value="{{ category }}">
+                        </div>
+                        <div class="form-group">
+                            <label for="description">商品描述</label>
+                            <textarea name="description" class="form-control" type="text" id="description" rows="3"
+                                      cols="80" maxlength="1000" required="required" >{{ good.description }}</textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="price">价格</label>
+                            <input name="price" class="form-control" id="price" type="number" placeholder="price"
+                                   min="0" step="0.01" required="required" value="{{ good.price }}">
+                        </div>
+                        <div>
+                            <span><input type="submit" class="btn btn-primary" value="保存"></span>
+                            <span><input type="button" id="edit_cancle" class="btn btn-warning" value="取消"> </span>
+                        </div>
+
+                    </form>
+            </div>
+        </div>
+    </div>
+    <script>
+        document.getElementById("edit_cancle").onclick = function () {
+            var form1 = document.createElement("form")
+            form1.action="{% url 'details' good.goodID  %}"
+            form1.method="post"
+            var input1 = document.createElement("input")
+            input1.type="hidden"
+            input1.name = "csrfmiddlewaretoken"
+            input1.value ="{{ csrf_token }}"
+            var input2 = document.createElement("input")
+            input2.type="hidden"
+            input2.name="goodID"
+            input2.value="{{ good.goodID }}"
+
+            form1.appendChild(input1)
+            form1.appendChild(input2)
+            form1.submit()
+        }
+    </script>
+{% endblock %}

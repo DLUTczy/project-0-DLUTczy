@@ -33,5 +33,7 @@ urlpatterns = [
     path("del_BeforeOrder", views.del_BeforeOrder, name="del_BeforeOrder"),
     path("payOrder", views.payOrder, name="payOrder"),
     path("got_sure", views.got_sure, name="got_sure"),
+    path("edit", views.edit, name="edit"),
+    path("edit_sure", views.edit_sure, name="edit_sure"),
 
 ]
